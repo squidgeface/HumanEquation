@@ -1,5 +1,7 @@
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInput))]
@@ -8,7 +10,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private CharacterController characterController;
     [SerializeField] private float _moveSpeed = 15f;
     [SerializeField] private float _sprintSpeed = 10f;
-    [SerializeField] private float _gravityValue = -9.81f;
     [SerializeField] private float _controllerDeadZone = 0.1f;
     [SerializeField] private float _gamepadRotateSmoothing = 1000f;
     [SerializeField] private Transform _aimPoint;
@@ -16,6 +17,17 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float rollDistance = 10f;  // Distance to roll
     [SerializeField] private float rollDuration = 0.5f;  // Duration of the roll
     [SerializeField] private float rollCooldown = 2f;  // Cooldown between rolls
+    [SerializeField] private float jumpDistance = 5f; // Distance the player will jump across
+    [SerializeField] private float jumpHeight = 3f; // Height of the jump
+    [SerializeField] private float jumpDuration = 1f; // Duration of the jump
+    [SerializeField] private float gravity = -9.81f;  // Gravity value
+
+    private float verticalVelocity;  // Vertical veloci
+
+    private bool isJumping;
+    private Vector3 jumpStart;
+    private Vector3 jumpEnd;
+    private float jumpStartTime;
 
     public static bool IsActionHappening = false;
 
@@ -31,28 +43,24 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 _moveInput;
     private Vector2 _aimInput;
-    private Vector3 _playerVelocity;
 
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
     }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     void Update()
     {
-        HandleMovement();
         HandleAim();
+        HandleMovement();
         if (isRolling)
         {
             Roll();
         }
+        Jump();
     }
+
 
     public void OnDeviceChange(PlayerInput input)
     {
@@ -106,12 +114,31 @@ public class PlayerMovement : MonoBehaviour
         if (_isSprinting)
             totalMovespeed = _moveSpeed + _sprintSpeed;
         
-        Vector3 move = new Vector3(_moveInput.x, 0, _moveInput.y) * totalMovespeed * Time.deltaTime;
-        characterController.Move(move * Time.deltaTime * _moveSpeed);
+        Vector3 move = new Vector3(_moveInput.x, 0, _moveInput.y);
+        if (IsGroundedAhead(move))
+            characterController.Move(move.normalized * Time.deltaTime * totalMovespeed);
         LastMovementDirection = characterController.velocity.normalized;
 
-        _playerVelocity.y += _gravityValue * Time.deltaTime;
-        characterController.Move(_playerVelocity * Time.deltaTime);
+        // If the player is grounded, reset the vertical velocity
+        if (characterController.isGrounded)
+        {
+            verticalVelocity = 0f;
+        }
+        else  // Otherwise, apply gravity to the vertical velocity
+        {
+            verticalVelocity += gravity;
+        }
+
+        // Create a movement vector for gravity, and move the player
+        Vector3 gravityMove = new Vector3(0, verticalVelocity, 0);
+        characterController.Move(gravityMove * Time.deltaTime);
+    }
+
+    bool IsGroundedAhead(Vector3 moveDirection)
+    {
+        // Offset the check point slightly above the ground to prevent false positives
+        Vector3 checkPoint = transform.position + Vector3.down + moveDirection/2;
+        return Physics.Raycast(checkPoint, Vector3.down, 1);
     }
 
     private void StartRoll()
@@ -140,6 +167,42 @@ public class PlayerMovement : MonoBehaviour
         Vector3 moveVector = nextPosition - transform.position;
 
         characterController.Move(moveVector);
+    }
+
+    void StartJump()
+    {
+        if (isJumping) return; // Prevent multiple jumps at the same time
+
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position + transform.up * -1, transform.forward, out hit, jumpDistance))
+        {
+            if (hit.collider.CompareTag("Ledge"))
+            {
+                isJumping = true;
+                jumpStart = transform.position;
+                jumpEnd = hit.point;
+                jumpStartTime = Time.time;
+            }
+        }
+    }
+
+    private void Jump()
+    {
+        if (isJumping)
+        {
+            float t = (Time.time - jumpStartTime) / jumpDuration;
+            if (t >= 1f)
+            {
+                isJumping = false;
+                transform.position = jumpEnd;
+            }
+            else
+            {
+                Vector3 nextPosition = Vector3.Lerp(jumpStart, jumpEnd, t);
+                nextPosition.y += jumpHeight * Mathf.Sin(Mathf.PI * t); // Add a sinusoidal height to simulate a jump arc
+                transform.position = nextPosition;
+            }
+        }
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -174,5 +237,24 @@ public class PlayerMovement : MonoBehaviour
                 isRolling = true;
             }
         }
+    }
+
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            if (!IsActionHappening)
+            {
+                StartJump();
+            }
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Vector3 move = new Vector3(_moveInput.x, 0, _moveInput.y);
+        Vector3 checkPoint = transform.position + move/2;
+        Debug.DrawLine(transform.position + transform.up*-1, transform.position + transform.forward * jumpDistance + (transform.up * -1), Color.white);
+        Gizmos.DrawRay(checkPoint + Vector3.down, Vector3.down);
     }
 }

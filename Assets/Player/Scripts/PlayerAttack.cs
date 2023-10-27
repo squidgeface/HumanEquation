@@ -17,17 +17,17 @@ public class PlayerAttack : MonoBehaviour
 
     void Update()
     {
-        if (isShooting && Time.time >= lastShotTime + gun.fireRate)
-        {
-            lastShotTime = Time.time;
-            Shoot();
-        }
+        //if (isShooting && Time.time >= lastShotTime + gun.fireRate)
+        //{
+        //    lastShotTime = Time.time;
+        //    Shoot();
+        //}
 
-        if (isMeleeAttacking)
-        {
-            MeleeAttack();
-            isMeleeAttacking = false;  // Reset flag
-        }
+        //if (isMeleeAttacking)
+        //{
+        //    MeleeAttack();
+        //    isMeleeAttacking = false;  // Reset flag
+        //}
     }
 
     public void OnShoot(InputAction.CallbackContext context)
