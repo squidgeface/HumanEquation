@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 265f85b77e658794596d399d537d44e9, type: 3}
+  m_Name: BlobGun
+  m_EditorClassIdentifier: 
+  gunName: BlobGun
+  gunPrefab: {fileID: 1965173711260378129, guid: fde43eb558f212043bdf46fe5d1a6cd8,
+    type: 3}
+  bulletEmitter: {fileID: 0}
+  ammoType: {fileID: 11400000, guid: 4db685378df36b543b9740b9db8bf787, type: 2}
+  elementalEffect: 0
+  bulletSpeed: 25
+  fireRate: 5
+  range: 10
