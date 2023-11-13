@@ -27,14 +27,6 @@ public class Bullet : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player")) return;
 
-        // Apply damage and elemental effect to enemies
-        Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-        if (enemy != null)
-        {
-            enemy.TakeDamage(equipedGun.ammoType.damage);
-            enemy.ApplyElementalEffect(equipedGun.elementalEffect);
-        }
-
         Destroy(gameObject);  // Destroy bullet on collision
     }
 }

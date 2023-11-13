@@ -67,9 +67,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -2800,7 +2797,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: 55f2aea2-f398-41b5-af20-6c402a1ea755
-    m_ActionName: TwinStick/Aim[/Mouse/position]
+    m_ActionName: 'TwinStick/Aim[/Mouse/position]'
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
@@ -2816,7 +2813,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: 3f052ab3-5060-446d-9684-c2e4b60e047e
-    m_ActionName: TwinStick/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
+    m_ActionName: 'TwinStick/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]'
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
@@ -2832,7 +2829,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: 947fded4-bdb8-4027-b5a3-922221d70cab
-    m_ActionName: TwinStick/Shoot[/Mouse/leftButton]
+    m_ActionName: 'TwinStick/Shoot[/Mouse/leftButton]'
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
@@ -2848,7 +2845,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: e3d9daeb-cbef-4dc0-a2a3-a0d5d7d5bd88
-    m_ActionName: TwinStick/Roll[/Keyboard/space]
+    m_ActionName: 'TwinStick/Roll[/Keyboard/space]'
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
@@ -2864,7 +2861,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: 74077fc4-d8fd-4288-bf01-f1446bd0863c
-    m_ActionName: TwinStick/Jump[/Keyboard/e]
+    m_ActionName: 'TwinStick/Jump[/Keyboard/e]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -2911,7 +2908,7 @@ MonoBehaviour:
   moveSpeed: 7
   rotationSpeed: 10
   lastMovementDirection: {x: 0, y: 0, z: 0}
-  groundCheckDistance: 0.5
+  groundCheckDistance: 1
   ledgeLayerMask:
     serializedVersion: 2
     m_Bits: 0
