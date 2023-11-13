@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private float rotationSpeed = 5f;
     [SerializeField] private Vector3 lastMovementDirection;
+    [SerializeField] private float groundCheckDistance = 0.5f;
 
     [Header("Jump Detection")]
     [SerializeField] private LayerMask ledgeLayerMask;
@@ -110,11 +111,24 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private bool IsGroundAhead()
+    {
+        RaycastHit hit;
+        var checkPostion = transform.position + Vector3.down/2 + lastMovementDirection.normalized/2;
+        // Adjust the second parameter to control how far ahead of the player the ground check should be
+        if (Physics.Raycast(checkPostion, Vector3.down, out hit, groundCheckDistance))
+        {
+            return true; // Ground is detected
+        }
+        return false; // No ground, edge is near
+    }
+
     private void HandleMovement()
     {
         Vector2 movement = inputHandler.GetPlayerMovement();
         Vector3 move = new Vector3(movement.x, 0, movement.y);
-        controller.Move(move * Time.deltaTime * moveSpeed);
+        if (IsGroundAhead())
+            controller.Move(move * Time.deltaTime * moveSpeed);
         lastMovementDirection = move;
 
         if (!isGrounded)
@@ -246,18 +260,17 @@ public class PlayerController : MonoBehaviour
     private void JumpOffWall()
     {
         // Calculate force direction, which is a combination of away from the wall and upward
-        Vector3 jumpOffForce = currentWallRunTarget.forward.normalized * wallRunJumpForce;
+        Vector3 targetPosition = transform.position + currentWallRunTarget.forward.normalized * wallRunJumpForce/2;
 
         // Apply the jump off force to the player's velocity
         // Initiate the parabolic jump
-        StartCoroutine(ParabolicJump(jumpOffForce, wallRunJumpForce));
+        StartCoroutine(ParabolicJump(targetPosition, wallRunJumpForce/16));
     }
 
     // Call this to end wall run due to various conditions
     private void EndWallRun()
     {
         isWallRunning = false;
-        playerVelocity = Vector3.zero;
         // Optional: Reset player's gravity if it was changed during wall run
         // For example, set gravity back to its original value
         // ... (More code as needed for your specific game mechanics)
@@ -309,5 +322,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
+    private void OnDrawGizmos()
+    {
+        var startPostion = transform.position + Vector3.down / 2 + lastMovementDirection.normalized/2;
+        var endPostion = startPostion + Vector3.down * groundCheckDistance;
+        Gizmos.DrawLine(startPostion, endPostion);
+    }
 }
