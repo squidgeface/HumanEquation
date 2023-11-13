@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private float rotationSpeed = 5f;
+    [SerializeField] private Vector3 lastMovementDirection;
 
     [Header("Jump Detection")]
     [SerializeField] private LayerMask ledgeLayerMask;
@@ -19,6 +20,15 @@ public class PlayerController : MonoBehaviour
 
     [Header("Physics")]
     [SerializeField] private float gravityValue = -9.81f;
+
+    [Header("Wall Running")]
+    [SerializeField] private float maxWallRunTime = 5f; // Maximum duration of wall run
+    [SerializeField] private float wallRunSpeed = 6f; // Speed of the wall run
+    [SerializeField] private float wallRunJumpForce = 5f; // Force of the jump off the wall
+    private bool isWallRunning = false;
+    private Transform currentWallRunTarget;
+    private Vector3 wallRunDirection; // The direction along the wall
+    private float wallRunStartTime;
 
     private CharacterController controller;
     private WeaponManager weaponManager;
@@ -54,7 +64,7 @@ public class PlayerController : MonoBehaviour
             playerVelocity.y = 0f;
         }
 
-        if (!isJumpingToTarget && !isDodging)
+        if (!isJumpingToTarget && !isDodging && !isWallRunning)
         {
             HandleMovement();
             HandleRotation();
@@ -67,9 +77,31 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+
         if (inputHandler.GetFireInput())
         {
             weaponManager.TryFire();
+        }
+
+        if ((int)inputHandler.GetSwapWeaponInput() != 0)
+            weaponManager.SwitchGun((int)inputHandler.GetSwapWeaponInput());
+
+        if (inputHandler.GetJumpInput() && currentWallRunTarget != null)
+        {
+            if (!isWallRunning)
+            {
+                StartWallRun();
+            }
+            else
+            {
+                JumpOffWall();
+            }
+        }
+
+
+        if (isWallRunning)
+        {
+            PerformWallRun();
         }
 
         if (isDodging)
@@ -83,6 +115,7 @@ public class PlayerController : MonoBehaviour
         Vector2 movement = inputHandler.GetPlayerMovement();
         Vector3 move = new Vector3(movement.x, 0, movement.y);
         controller.Move(move * Time.deltaTime * moveSpeed);
+        lastMovementDirection = move;
 
         if (!isGrounded)
         {
@@ -175,6 +208,73 @@ public class PlayerController : MonoBehaviour
 
         // The jump is complete, so we're no longer jumping to a target
         isJumpingToTarget = false;
+        EndWallRun();
+    }
+
+
+    private void StartWallRun()
+    {
+        isWallRunning = true;
+        wallRunStartTime = Time.time;
+
+        // Optional: Adjust player's gravity or apply a constant force to stick to the wall
+        // For example, set gravity to 0 or a lower value
+        playerVelocity.y = 0; // Reset vertical velocity
+        // ... (More code as needed for your specific game mechanics)
+    }
+
+    // Call this in Update when isWallRunning is true
+    private void PerformWallRun()
+    {
+        if (Time.time - wallRunStartTime > maxWallRunTime)
+        {
+            EndWallRun();
+            return;
+        }
+
+        // Move the player along the wall run direction with a constant speed
+        Vector3 wallRunMovement = wallRunDirection * wallRunSpeed * Time.deltaTime;
+        // Apply only horizontal movement
+        wallRunMovement.y = 0;
+        controller.Move(wallRunMovement);
+
+        // Optional: Apply a slight force or modify gravity to simulate wall running better
+        // ... (More code as needed for your specific game mechanics)
+    }
+
+    // Call this when the player jumps off the wall
+    private void JumpOffWall()
+    {
+        // Calculate force direction, which is a combination of away from the wall and upward
+        Vector3 jumpOffForce = currentWallRunTarget.forward.normalized * wallRunJumpForce;
+
+        // Apply the jump off force to the player's velocity
+        // Initiate the parabolic jump
+        StartCoroutine(ParabolicJump(jumpOffForce, wallRunJumpForce));
+    }
+
+    // Call this to end wall run due to various conditions
+    private void EndWallRun()
+    {
+        isWallRunning = false;
+        playerVelocity = Vector3.zero;
+        // Optional: Reset player's gravity if it was changed during wall run
+        // For example, set gravity back to its original value
+        // ... (More code as needed for your specific game mechanics)
+    }
+
+    private void DetermineWallRunDirection(Transform wallTransform)
+    {
+        // Assuming the wallTransform's forward vector is the normal of the wall
+        Vector3 wallNormal = wallTransform.forward;
+
+        // Use the player's last movement direction to determine which way to run on the wall
+        wallRunDirection = Vector3.Cross(wallNormal, Vector3.up).normalized;
+        if (Vector3.Dot(lastMovementDirection, wallNormal) > 0)
+        {
+            // If the player's movement direction is towards the wall, change wall run direction to the opposite side
+            wallRunDirection = -wallRunDirection;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -188,6 +288,11 @@ public class PlayerController : MonoBehaviour
                 jumpTarget = other.transform == trigger.JumpPoint1 ? trigger.JumpPoint2.transform.position : trigger.JumpPoint1.transform.position;
             }
         }
+        if (other.CompareTag("WallRunTrigger"))
+        {
+            currentWallRunTarget = other.transform; // Assuming the trigger has a transform that indicates the run direction
+            DetermineWallRunDirection(currentWallRunTarget);
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -195,6 +300,12 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("Ledge"))
         {
             jumpTarget = Vector3.zero;
+        }
+        if (other.CompareTag("WallRunTrigger"))
+        {
+            currentWallRunTarget = null;
+            wallRunDirection = Vector3.zero;
+            isWallRunning = false;
         }
     }
 

@@ -70,4 +70,9 @@ public class InputHandler
     {
         return playerControls.Player.Shoot.ReadValue<float>() > 0.1f;
     }
+
+    public float GetSwapWeaponInput()
+    {
+        return playerControls.Player.SwitchWeapon.ReadValue<float>();
+    }
 }
