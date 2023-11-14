@@ -9,9 +9,11 @@ public class EnemyObject : ScriptableObject
     public Ammo ammoType;
     public Weapon weapontype;
     public ElementType elementalEffect;
+    public int maxHealth;
     public float moveSpeed;
     public float fireRate;
     public float agroRange;
+    public int initialPoolSize;
     // Other enemy properties...
 }
 

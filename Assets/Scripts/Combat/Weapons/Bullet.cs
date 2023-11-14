@@ -27,6 +27,11 @@ public class Bullet : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player")) return;
 
+        HealthManager healthManager = collision.gameObject.GetComponent<HealthManager>();
+        if (healthManager != null)
+        {
+            healthManager.TakeDamage(equipedGun.ammoType.damage);
+        }
         Destroy(gameObject);  // Destroy bullet on collision
     }
 }
