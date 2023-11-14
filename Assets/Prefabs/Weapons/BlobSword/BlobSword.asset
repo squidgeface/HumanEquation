@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: BlobSword
   m_EditorClassIdentifier: 
   weaponName: BlobSword
+  weaponPrefab: {fileID: 1965173711260378129, guid: ac96957e4a76e3d4296ecfcb564cc80c,
+    type: 3}
   elementalEffect: 0
-  range: 2
-  damage: 5
+  damage: 1
+  attackRate: 2
+  attackRange: 2

@@ -6,7 +6,7 @@ public class Enemy : MonoBehaviour
     public EnemyObject EnemyData;
     private NavMeshAgent agent;
     private Transform target;
-    private float lastFireTime;
+    private float lastAttackTime;
 
     public void InitializeEnemy(EnemyObject data)
     {
@@ -15,7 +15,7 @@ public class Enemy : MonoBehaviour
         target = GameObject.FindGameObjectWithTag("Player").transform; // Make sure to tag your player object.
 
         agent.speed = data.moveSpeed;
-        lastFireTime = Time.time - 1 / data.fireRate; // Initialize the last fire time so the enemy can fire immediately.
+        lastAttackTime = Time.time - 1 / data.weaponType.attackRate; // Initialize the last fire time so the enemy can fire immediately.
 
         // Initialize other properties from EnemyObject if needed...
     }
@@ -27,10 +27,10 @@ public class Enemy : MonoBehaviour
         {
             agent.SetDestination(target.position);
 
-            if (Time.time >= lastFireTime + 1 / EnemyData.fireRate)
+            if (Time.time >= lastAttackTime + 1 / EnemyData.weaponType.attackRate)
             {
                 // Implement firing logic here using enemyData.ammoType and enemyData.weapontype
-                lastFireTime = Time.time;
+                lastAttackTime = Time.time;
             }
         }
         else

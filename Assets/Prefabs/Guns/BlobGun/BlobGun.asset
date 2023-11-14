@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 265f85b77e658794596d399d537d44e9, type: 3}
   m_Name: BlobGun
   m_EditorClassIdentifier: 
-  gunName: BlobGun
-  gunPrefab: {fileID: 1965173711260378129, guid: fde43eb558f212043bdf46fe5d1a6cd8,
+  weaponName: BlobGun
+  weaponPrefab: {fileID: 1965173711260378129, guid: fde43eb558f212043bdf46fe5d1a6cd8,
     type: 3}
-  bulletEmitter: {fileID: 0}
-  ammoType: {fileID: 11400000, guid: 4db685378df36b543b9740b9db8bf787, type: 2}
   elementalEffect: 0
+  damage: 1
+  attackRate: 3
+  attackRange: 10
+  bulletEmitter: {fileID: 0}
   bulletSpeed: 25
-  fireRate: 5
-  range: 10
+  bulletPrefab: {fileID: 542009041188577767, guid: 68f726f081ef172468ea8cc43d335f13,
+    type: 3}

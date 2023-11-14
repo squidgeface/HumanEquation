@@ -7,6 +7,7 @@ public class EnemyPoolManager : MonoBehaviour
 
     [SerializeField] private EnemyObject[] enemyTypes; // Assign different enemy types in the inspector
     private Dictionary<string, Queue<GameObject>> poolDictionary;
+    public Dictionary<string, float> TotalSpawnedEnemies = new Dictionary<string, float>();
 
     [HideInInspector] public EnemyObject[] EnemyTypes => enemyTypes;
     private void Awake()
@@ -54,6 +55,11 @@ public class EnemyPoolManager : MonoBehaviour
             }
         }
 
+        if (TotalSpawnedEnemies.ContainsKey(enemyName))
+            TotalSpawnedEnemies[enemyName]++;
+        else
+            TotalSpawnedEnemies.Add(enemyName, 0);
+
         GameObject enemyToSpawn = poolDictionary[enemyName].Dequeue();
         enemyToSpawn.SetActive(true);
         return enemyToSpawn;
@@ -64,5 +70,6 @@ public class EnemyPoolManager : MonoBehaviour
     {
         enemy.SetActive(false);
         poolDictionary[enemyName].Enqueue(enemy);
+        TotalSpawnedEnemies[enemyName]--;
     }
 }

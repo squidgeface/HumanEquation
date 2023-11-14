@@ -36,7 +36,10 @@ public class EnemySpawner : MonoBehaviour
     {
         foreach (var location in spawnPoint.spawnLocations)
         {
-            GameObject enemyGO = EnemyPoolManager.Instance.GetPooledEnemy(spawnPoint.enemyType.enemyName);
+            var enemyName = spawnPoint.enemyType.enemyName;
+            if (EnemyPoolManager.Instance.TotalSpawnedEnemies.ContainsKey(enemyName) && EnemyPoolManager.Instance.TotalSpawnedEnemies[enemyName] >= spawnPoint.maxSpawnCount) return;
+
+            GameObject enemyGO = EnemyPoolManager.Instance.GetPooledEnemy(enemyName);
             if (enemyGO != null)
             {
                 enemyGO.transform.position = location.position;
@@ -52,7 +55,7 @@ public class EnemySpawner : MonoBehaviour
                 {
                     // If not immediate, deactivate the enemy and allow the regular spawn process
                     enemyGO.SetActive(false);
-                    EnemyPoolManager.Instance.ReturnEnemyToPool(spawnPoint.enemyType.enemyName, enemyGO);
+                    EnemyPoolManager.Instance.ReturnEnemyToPool(enemyName, enemyGO);
                 }
             }
             else

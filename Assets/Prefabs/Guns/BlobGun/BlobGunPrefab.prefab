@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1543754678278735587}
   - component: {fileID: 8462111515917939713}
   m_Layer: 0
-  m_Name: Slob
+  m_Name: BlobGunPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5b5fd0f3d3def6d45a260a2466028b05, type: 2}
+  - {fileID: 2100000, guid: 7e46814569ba6d14d9c1af071c8529de, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

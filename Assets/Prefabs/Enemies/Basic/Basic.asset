@@ -15,11 +15,9 @@ MonoBehaviour:
   enemyName: Basic
   enemyPrefab: {fileID: 6689513526899489146, guid: ea4676880f24b76499368650d7e9d902,
     type: 3}
-  ammoType: {fileID: 0}
-  weapontype: {fileID: 11400000, guid: ff312069c8c38d645b18f9be407b7b40, type: 2}
+  weaponType: {fileID: 11400000, guid: ff312069c8c38d645b18f9be407b7b40, type: 2}
   elementalEffect: 0
   maxHealth: 1
   moveSpeed: 5
-  fireRate: 5
   agroRange: 10
   initialPoolSize: 10

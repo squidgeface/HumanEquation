@@ -8,4 +8,5 @@ public class SpawnPoint
     public float spawnRate;
     public float lastSpawnTime;
     public int initialSpawnCount;
+    public int maxSpawnCount;
 }

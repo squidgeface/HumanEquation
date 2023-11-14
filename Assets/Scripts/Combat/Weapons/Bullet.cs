@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
@@ -17,7 +15,7 @@ public class Bullet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Vector3.Distance(startPosition, transform.position) > equipedGun.range)
+        if (Vector3.Distance(startPosition, transform.position) > equipedGun.attackRange)
         {
             Destroy(gameObject);
         }
@@ -30,7 +28,7 @@ public class Bullet : MonoBehaviour
         HealthManager healthManager = collision.gameObject.GetComponent<HealthManager>();
         if (healthManager != null)
         {
-            healthManager.TakeDamage(equipedGun.ammoType.damage);
+            healthManager.TakeDamage(equipedGun.damage);
         }
         Destroy(gameObject);  // Destroy bullet on collision
     }
